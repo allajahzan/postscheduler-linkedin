@@ -147,7 +147,7 @@ export function EditPostModal({ post, isOpen, onClose }: EditPostModalProps) {
             <AppInputField
               label="Image URL"
               optional
-              placeholder="Paste a Public Google Drive Link or Direct Image URL"
+              placeholder="Paste a Public Google Drive Image Link or Direct Image URL"
               className="disabled:opacity-30 disabled:cursor-not-allowed"
               disabled={generateImage}
               error={errors.image_url}
@@ -158,8 +158,8 @@ export function EditPostModal({ post, isOpen, onClose }: EditPostModalProps) {
             <p className="text-xs flex items-center gap-2">
               <Info size={14} />
               <span>
-                If you don't have an image, AI will generate one for you if you
-                enable it.
+                If you don't have an image, AI will generate one for you when
+                enabled.
               </span>
             </p>
             <div

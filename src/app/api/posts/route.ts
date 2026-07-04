@@ -3,7 +3,10 @@ import { getDb } from "@/lib/mongodb";
 import { getSession } from "@/lib/auth";
 import { ObjectId } from "mongodb";
 import { PostDocument } from "@/types";
-import { validateAndTransformImageUrl } from "@/lib/validation";
+import {
+  validateAndTransformImageUrl,
+  checkImageAccessible,
+} from "@/lib/validation";
 
 export async function GET() {
   try {
@@ -59,7 +62,7 @@ export async function POST(request: Request) {
     }
 
     let finalImageUrl = image_url || "";
-    if (finalImageUrl) {
+    if (finalImageUrl && !generate_image) {
       const validation = validateAndTransformImageUrl(finalImageUrl);
       if (!validation.isValid) {
         return NextResponse.json(
@@ -67,6 +70,15 @@ export async function POST(request: Request) {
           { status: 400 },
         );
       }
+
+      const isAccessible = await checkImageAccessible(validation.finalUrl);
+      if (!isAccessible) {
+        return NextResponse.json(
+          { message: "This image URL is not publicly accessible." },
+          { status: 400 },
+        );
+      }
+
       finalImageUrl = validation.finalUrl;
     }
 

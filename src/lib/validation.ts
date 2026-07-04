@@ -57,3 +57,22 @@ export function validateAndTransformImageUrl(
           : "valid",
   };
 }
+
+/**
+ * Checks if an image URL is publicly accessible by performing a server-side fetch.
+ * If a Google Drive link is private, it redirects to a login page which returns text/html instead of an image.
+ */
+export async function checkImageAccessible(url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url, { method: "GET", redirect: "follow" });
+    if (!response.ok) return false;
+
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("text/html")) {
+      return false; // Private drive links redirect to login page (HTML)
+    }
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
