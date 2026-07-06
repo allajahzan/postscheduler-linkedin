@@ -9,7 +9,27 @@ export interface UserDocument {
   linkedin_person_urn?: string;
   linkedin_token_expires_at?: Date;
   profile_picture?: string;
+  preferences?: {
+    suggestions_enabled: boolean;
+    topics: string[];
+  };
   created_at: Date;
+}
+
+
+
+// MongoDB document structure
+export interface SuggestionTopic {
+  _id?: ObjectId;
+  topic: string;
+  suggestions: {
+    title: string;
+    description: string;
+    style_prompt?: string;
+    based_on?: string;
+  }[];
+  generated_at: Date;
+  valid_until: Date;
 }
 
 export interface PostDocument {

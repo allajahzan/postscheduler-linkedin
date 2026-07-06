@@ -34,9 +34,11 @@ type PostFormValues = z.infer<typeof postSchema>;
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialData?: Partial<PostFormValues>;
+  onSuccess?: () => void;
 }
 
-export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
+export function CreatePostModal({ isOpen, onClose, initialData, onSuccess }: CreatePostModalProps) {
   const createPost = useCreatePost();
 
   const {
@@ -50,6 +52,7 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
     resolver: zodResolver(postSchema),
     defaultValues: {
       generate_image: false,
+      ...initialData,
     },
   });
 
@@ -60,12 +63,22 @@ export function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
     if (!isOpen) {
       reset();
     }
-  }, [isOpen, reset]);
+    if (isOpen && initialData) {
+      reset({
+        ...initialData,
+        generate_image: initialData.generate_image ?? false,
+      });
+    }
+  }, [isOpen, initialData, reset]);
 
   const onSubmit = (data: PostFormValues) => {
     createPost.mutate(data, {
       onSuccess: () => {
         onClose();
+        reset();
+        if (onSuccess) {
+          onSuccess();
+        }
       },
     });
   };

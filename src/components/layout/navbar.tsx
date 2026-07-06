@@ -69,6 +69,18 @@ export function Navbar() {
             Posts
           </Link>
 
+          <Link
+            href="/suggestions"
+            className={cn(
+              "hidden text-sm transition-colors md:block",
+              pathname === "/suggestions"
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            Suggestions
+          </Link>
+
           {/* Notification Bell → links to /notifications page */}
           <Link
             href="/notifications"

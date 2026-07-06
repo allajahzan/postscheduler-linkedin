@@ -9,6 +9,10 @@ export interface User {
   created_at: string;
   profile_picture?: string;
   linkedin_token_expires_at?: string;
+  preferences?: {
+    suggestions_enabled: boolean;
+    topics: string[];
+  };
 }
 
 export interface Quota {

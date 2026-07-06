@@ -8,6 +8,7 @@ import { CreatePostModal } from "@/components/posts/create-post-modal";
 import { EditPostModal } from "@/components/posts/edit-post-modal";
 import { DeleteConfirmModal } from "@/components/common/delete-confirm-modal";
 import { EmptyState } from "@/components/common/empty-state";
+import { SuggestionsSetupModal } from "@/components/suggestions/suggestions-setup-modal";
 import { Button } from "@/components/ui/button";
 import { Plus, AlertTriangle, Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -36,6 +37,21 @@ export default function DashboardPage() {
 
   const deletePost = useDeletePost();
   const { data: userData, isLoading: isUserLoading } = useUser();
+  const quota = userData?.quota || {
+    used: 0,
+    limit: 3,
+    next_reset_at: null,
+  };
+  const userPreferences = userData?.user?.preferences;
+
+  const [showSuggestionsModal, setShowSuggestionsModal] = useState(false);
+
+  // Trigger modal if preferences not set
+  useMemo(() => {
+    if (userData && userPreferences?.suggestions_enabled === false) {
+      setShowSuggestionsModal(true);
+    }
+  }, [userData, userPreferences?.suggestions_enabled]);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
@@ -51,11 +67,6 @@ export default function DashboardPage() {
     [publishedData],
   );
 
-  const quota = userData?.quota || {
-    used: 0,
-    limit: 3,
-    next_reset_at: null,
-  };
   const isLimitReached = quota.used >= quota.limit;
 
   const tokenWarning = useMemo(() => {
@@ -266,6 +277,10 @@ export default function DashboardPage() {
         onConfirm={handleConfirmDeletePost}
         isPending={deletePost.isPending}
       />
+
+      {showSuggestionsModal && (
+        <SuggestionsSetupModal onClose={() => setShowSuggestionsModal(false)} />
+      )}
     </ProtectedRoute>
   );
 }
