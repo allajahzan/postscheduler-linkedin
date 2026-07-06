@@ -28,14 +28,17 @@ export async function POST(request: Request) {
 
     const body = await request.json().catch(() => null);
 
-    if (!body || !Array.isArray(body)) {
+    if (!body) {
       return NextResponse.json(
-        { error: "Request body must be an array of topic objects" },
+        { error: "Request body is required" },
         { status: 400 },
       );
     }
 
-    const incomingTopics: IncomingSuggestionTopic[] = body;
+    // Support both a single topic object or an array of topics
+    const incomingTopics: IncomingSuggestionTopic[] = Array.isArray(body)
+      ? body
+      : [body];
 
     if (incomingTopics.length === 0) {
       return NextResponse.json({
