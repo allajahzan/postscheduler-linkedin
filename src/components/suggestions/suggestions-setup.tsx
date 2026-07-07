@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/form-fields";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/axios";
 import { toast } from "sonner";
@@ -116,15 +117,14 @@ export function SuggestionsSetup({
           >
             Not now
           </Button>
-          <Button
+          <SubmitButton
             type="button"
             onClick={handleSubmit}
-            disabled={updatePreferences.isPending}
+            isPending={updatePreferences.isPending}
+            loadingText="Saving..."
           >
-            {updatePreferences.isPending
-              ? "Saving..."
-              : "Start getting suggestions"}
-          </Button>
+            Start getting suggestions
+          </SubmitButton>
         </div>
       </div>
     </div>
