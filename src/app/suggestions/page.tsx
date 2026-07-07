@@ -3,7 +3,7 @@
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { useUser } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { Loader2, Zap, Settings, Sparkles, ExternalLink } from "lucide-react";
+import { Loader2, Settings } from "lucide-react";
 import { useState } from "react";
 import { Loader } from "@/components/ui/loader";
 import { EmptyState } from "@/components/common/empty-state";
@@ -14,17 +14,18 @@ import { SuggestionCard } from "@/components/suggestions/suggestion-card";
 
 export default function SuggestionsPage() {
   const { data: userData, isLoading: isUserLoading } = useUser();
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [selectedTopicFilter, setSelectedTopicFilter] = useState("All");
+  const [selectedSuggestion, setSelectedSuggestion] =
+    useState<Suggestion | null>(null);
+
   const {
     data,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     isLoading: isSuggestionsLoading,
-  } = useSuggestions();
-
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [selectedSuggestion, setSelectedSuggestion] =
-    useState<Suggestion | null>(null);
+  } = useSuggestions(selectedTopicFilter);
 
   const isLoading = isUserLoading || isSuggestionsLoading;
   const userPreferences = userData?.user?.preferences;
@@ -60,18 +61,35 @@ export default function SuggestionsPage() {
         </div>
 
         {/* Active Topics */}
-        {userPreferences?.topics && userPreferences.topics.length > 0 && (
-          <div className="mt-6 flex flex-wrap gap-2">
-            {userPreferences.topics.map((topic) => (
-              <span
-                key={topic}
-                className="rounded-full bg-secondary  px-2.5 py-1 text-xs font-medium text-secondary-foreground"
+        {userPreferences?.suggestions_enabled &&
+          userPreferences?.topics &&
+          userPreferences.topics.length > 0 && (
+            <div className="mt-8 flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedTopicFilter("All")}
+                className={`rounded-full px-3 py-1 text-xs font-medium cursor-pointer transition-colors ${
+                  selectedTopicFilter === "All"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                }`}
               >
-                {topic}
-              </span>
-            ))}
-          </div>
-        )}
+                All
+              </button>
+              {userPreferences.topics.map((topic) => (
+                <button
+                  key={topic}
+                  onClick={() => setSelectedTopicFilter(topic)}
+                  className={`rounded-full px-3 py-1 text-xs font-medium cursor-pointer transition-colors ${
+                    selectedTopicFilter === topic
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  }`}
+                >
+                  {topic}
+                </button>
+              ))}
+            </div>
+          )}
 
         <div className="mt-8 space-y-4">
           {isLoading ? (

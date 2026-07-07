@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import { ExternalLink, Zap } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Suggestion } from "@/hooks/use-suggestions";
 import { LinkedInIcon } from "../common/linkedin-icon";
@@ -44,9 +44,14 @@ export function SuggestionCard({ suggestion, onUse }: SuggestionCardProps) {
         ) : (
           <div />
         )}
-        <Button size="sm" onClick={() => onUse(suggestion)}>
-          <LinkedInIcon />
-          Schedule Post
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => onUse(suggestion)}
+          className="text-muted-foreground hover:bg-secondary hover:text-foreground"
+        >
+          <ArrowUpRight />
+          Select
         </Button>
       </div>
     </div>

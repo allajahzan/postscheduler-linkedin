@@ -23,12 +23,19 @@ interface SuggestionsResponse {
   };
 }
 
-export const useSuggestions = () => {
+export const useSuggestions = (topic?: string) => {
   return useInfiniteQuery({
-    queryKey: ["suggestions"],
+    queryKey: ["suggestions", topic],
     queryFn: async ({ pageParam = 1 }) => {
+      const url = new URL("/suggestions", window.location.origin);
+      url.searchParams.append("page", pageParam.toString());
+      url.searchParams.append("limit", "8");
+      if (topic && topic !== "All") {
+        url.searchParams.append("topic", topic);
+      }
+
       const { data } = await api.get<SuggestionsResponse>(
-        `/suggestions?page=${pageParam}&limit=8`,
+        url.pathname + url.search,
       );
       return data;
     },
@@ -39,6 +46,6 @@ export const useSuggestions = () => {
       return undefined;
     },
     initialPageParam: 1,
-    staleTime: 5 * 24 * 60 * 60 * 1000, // 5 days
+    staleTime: 1 * 24 * 60 * 60 * 1000, // 1 day
   });
 };
